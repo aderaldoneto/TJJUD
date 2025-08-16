@@ -6,6 +6,7 @@ use App\Enums\Currency;
 use App\Filament\Forms\Components\PriceInput;
 use App\Filament\Resources\LivroResource\Pages;
 use App\Filament\Resources\LivroResource\RelationManagers as Relations;
+use App\Models\Autor;
 use App\Models\Livro;
 use Filament\Forms;
 use Filament\Forms\Components\Placeholder;
@@ -13,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,7 +24,7 @@ class LivroResource extends Resource
 {
     protected static ?string $model = Livro::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
 
     public static function form(Form $form): Form
     {
@@ -69,35 +71,73 @@ class LivroResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('titulo')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('editora')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('edicao')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('ano_publicacao')
-                    ->searchable(),
-
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('valor')
-                    ->label(__('Valor (R$)'))
+                    ->label(__('R$'))
                     ->formatStateUsing(function (int $state) {
                         return Number::currency($state / 100, Currency::BRL->name);
                     })
                     ->default(0)
                     ->toggleable()
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('autores')
+                    ->label(__('Autor'))
+                    ->relationship('autores', 'nome')
+                    ->preload()
+                    ->options(function () {
+
+                        return Autor::query()
+                            ->pluck('nome', 'id')
+                            ->toArray();
+                    })
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('assuntos')
+                    ->label(__('Assunto'))
+                    ->relationship('assuntos', 'descricao')
+                    ->preload()
+                    ->options(function () {
+
+                        return Autor::query()
+                            ->pluck('descricao', 'id')
+                            ->toArray();
+                    })
+                    ->multiple(),
+                Filter::make('valor')
+                    ->label(__('Preço'))
+                    ->form([
+                        PriceInput::make('max')
+                            ->label(__('Valor máximo (R$)')),
+                    ])
+                    ->indicateUsing(function (array $data) {
+                        if (empty($data['max']) || ! (int) $data['max']) {
+                            return null;
+                        }
+
+                        return __('Valor máximo').': '.Number::currency($data['max'], Currency::BRL->name);
+                    })
+                    ->query(function (Builder $query, array $data) {
+                        if (empty($data['max']) || ! (int) $data['max']) {
+                            return;
+                        }
+
+                        $max = $data['max'] * 100;
+
+                        $query->where('valor', '<=', $max);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

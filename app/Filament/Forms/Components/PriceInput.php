@@ -12,7 +12,8 @@ class PriceInput extends TextInput
     {
         return parent::make($name)
             ->prefix('R$')
-            ->minValue(0)
+            ->live(debounce: 300)
+            ->minValue(1)
             ->maxValue(999_99)
             ->numeric()
             ->decimals(2);
