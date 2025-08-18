@@ -16,11 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class LivroPorAutorViewResource extends Resource
 {
     protected static ?string $model = LivroPorAutorView::class;
-
     protected static ?string $navigationLabel = 'Relatório';
-
-
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+    protected static ?string $modelLabel       = 'relatório';
+    protected static ?string $pluralModelLabel = 'relatórios';
 
     public static function form(Form $form): Form
     {
@@ -53,27 +52,13 @@ class LivroPorAutorViewResource extends Resource
                     ->wrap(),
                 Tables\Columns\TextColumn::make('valor_formatado')
                     ->label('Valor')
-                    ->sortable(query: fn($q,$dir)=>$q->orderBy('valor',$dir)),
+                    ->sortable(),
             ])
-            ->filters([
-                //
+            ->groups([
+                \Filament\Tables\Grouping\Group::make('autor_nome')
+                    ->label('Autor'),
             ])
-            // ->actions([
-            //     Tables\Actions\EditAction::make(),
-            // ])
-            // ->bulkActions([
-            //     Tables\Actions\BulkActionGroup::make([
-            //         Tables\Actions\DeleteBulkAction::make(),
-            //     ]),
-            // ])
-            ;
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
+            ->defaultGroup('autor_nome');
     }
 
     public static function getPages(): array

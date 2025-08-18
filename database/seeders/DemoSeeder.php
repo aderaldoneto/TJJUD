@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Assunto;
 use App\Models\Autor;
 use App\Models\Livro;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -15,6 +16,11 @@ class DemoSeeder extends Seeder
      */
     public function run(): void
     {
+        $user     = User::factory()->create([
+            'name'     => 'Test User',
+            'email'    => 'test@example.com', 
+            'password' => bcrypt('password'),
+        ]);
         $autores  = Autor::factory(15)->create();
         $assuntos = Assunto::factory(10)->create();
 
