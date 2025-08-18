@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use App\Observers\LivroObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([LivroObserver::class])]
 class Livro extends Model
 {
     use HasFactory;

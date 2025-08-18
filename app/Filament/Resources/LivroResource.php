@@ -36,7 +36,10 @@ class LivroResource extends Resource
                 Forms\Components\TextInput::make('editora')
                     ->maxLength(40),
                 Forms\Components\TextInput::make('edicao')
-                    ->numeric(),
+                    ->numeric()
+                    ->step(1)
+                    ->minValue(1)
+                    ->rules(['integer', 'min:1']),
                 Forms\Components\Select::make('ano_publicacao')
                     ->options(fn () => array_combine ( 
                         range((int) date('Y'), 1500), 

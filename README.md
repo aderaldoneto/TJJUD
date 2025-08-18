@@ -54,6 +54,7 @@ sail artisan make:filament-relation-manager LivroResource autores
 sail artisan make:filament-relation-manager LivroResource assuntos  
  
 sail artisan make:observer AssuntoObserver --model=Assunto  
+sail artisan make:observer LivroObserver --model=Livro 
  
 sail artisan make:migration view_relatorio_livros_por_autor  
 sail artisan make:filament-resource LivroPorAutorView  
