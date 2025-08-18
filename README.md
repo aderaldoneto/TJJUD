@@ -18,11 +18,10 @@ sail artisan test (utilizei o PHPUnit ao invés de Pest)
 ## Dados iniciais  
 sail php artisan db:seed  
 sail php artisan db:seed DemoSeeder  
- 
- 
+  
 User: 
-e-mail: test@example.com 
-senha: password
+e-mail: test@example.com  
+senha: password  
 
 
 
