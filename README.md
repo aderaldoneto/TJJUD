@@ -25,7 +25,7 @@ senha: password
 
 
 
-Comandos: 
+## Comandos: 
 composer create-project laravel/laravel TJJUD 
 php artisan sail:install --with=pgsql 
 sail up -d 
